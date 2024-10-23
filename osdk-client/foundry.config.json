@@ -1,0 +1,11 @@
+{
+  "foundryUrl": "https://tekuro.usw-16.palantirfoundry.com",
+  "site": {
+    "application": "ri.third-party-applications.main.application.27f9576b-3a66-4c63-aedb-7fa21e872a9f",
+    "directory": "./dist",
+    "autoVersion": {
+      "type": "git-describe",
+      "tagPrefix": ""
+    }
+  }
+}

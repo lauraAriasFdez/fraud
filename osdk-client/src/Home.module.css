@@ -1,0 +1,71 @@
+.methods {
+  padding: 2em;
+  gap: 2em;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.fraudResult {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.dropzone {
+    margin-bottom: 20px;
+}
+
+.transparent {
+    background: none;
+    color: rgb(0, 0, 0);
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 3px 3px 0px;
+}
+
+.previousMedia {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    overflow: scroll;
+    height: 150px;
+    width: 100%;
+    gap: 10px;
+}
+
+.imageCard {
+    transform: rotate3d(0,1,0,-20deg);
+}
+
+.imageDropText {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding-bottom: 40px;
+    padding-top: 40px;
+}
+
+.imageResponseText {
+    white-space: pre-wrap;
+    text-align: left;
+}
+
+.dynamicImages {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+}
+
+.imageContainer {
+    width: 600px;
+    height: 400px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    padding: 5px;
+}
+
