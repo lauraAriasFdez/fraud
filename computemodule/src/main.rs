@@ -101,21 +101,21 @@ fn detect_fraud(query: Query) -> Result<QueryResult, Box<dyn Error>> {
         draw_hollow_rect(&mut image_buffer, &Region { start: Point { x: r.start.0, y: r.start.1 }, end: Point { x: r.end.0, y: r.end.1 } }, red);
     }
     if !accumulated.is_empty() {
-        let mut result = "edited";
+        let mut result = String::from("edited");
         if foreign_grid_areas.is_cropped() {
-            result = "editcrop";
+            result = String::from("editcrop");
         }
         let mut buf = Cursor::new(Vec::new());
         image_buffer.write_to(&mut buf, image::ImageOutputFormat::Png)?;
         let enc_img_out = general_purpose::STANDARD.encode(buf.into_inner());
-        return Ok(QueryResult { enc_img_out, text: accumulated, result: result.to_owned() });
+        return Ok(QueryResult { enc_img_out, text: accumulated, result });
     }
 
     if foreign_grid_areas.is_cropped() {
-        return Ok(QueryResult {enc_img_out: query.enc_img_in, text: "".to_owned(), result: "cropped".to_owned() });
+        return Ok(QueryResult {enc_img_out: query.enc_img_in, text: "".to_owned(), result: String::from("cropped") });
     }
 
-    return Ok(QueryResult { enc_img_out: query.enc_img_in, text: "".to_owned(), result: "clean".to_owned()});
+    return Ok(QueryResult { enc_img_out: query.enc_img_in, text: "".to_owned(), result: String::from("clean") });
 }
 
 
@@ -141,12 +141,12 @@ fn post_result(client: &Client, post_result_uri: &str, job_id: &str, result: &Qu
 fn main() {
     env_logger::init();
 
-    let cert_path = env::var("DEFAULT_CA_PATH").expect("DEFAULT_CA_PATH environment variable not set");
-    let module_auth_token = fs::read_to_string(env::var("MODULE_AUTH_TOKEN").expect("MODULE_AUTH_TOKEN environment variable not set"))
+    let cert_path = env::var("DEFAULT_CA_PATH").expect("DEFAULT_CA_PATH env var not set");
+    let module_auth_token = fs::read_to_string(env::var("MODULE_AUTH_TOKEN").expect("MODULE_AUTH_TOKEN env var not set"))
         .expect("Failed to read module auth token");
     
-    let get_job_uri = "https://localhost:8945/interactive-module/api/internal-query/job";
-    let post_result_uri = "https://localhost:8945/interactive-module/api/internal-query/results";
+    let get_job_uri = env::var("GET_JOB_URI").expect("GET_JOB_URI env var not set");
+    let post_result_uri = env::var("POST_RESULT_URI").expect("POST_RESULT_URL env var not set");
     let cert_data = fs::read(cert_path.clone()).expect("Failed to read cert path");
     let cert = Certificate::from_pem(&cert_data).expect("Failed to load cert");
 
@@ -157,14 +157,23 @@ fn main() {
         .expect("Failed to build client");
 
     loop {
-        match get_job_blocking(&client, get_job_uri, &module_auth_token) {
+        match get_job_blocking(&client, &get_job_uri, &module_auth_token) {
             Ok(job) => {
                 let v1 = job.compute_module_job_v1;
                 let job_id = &v1.job_id;
 
                 match detect_fraud(v1.query) {
-                    Ok(res) => post_result(&client, post_result_uri, job_id, &res, &module_auth_token),
-                    Err(err) => post_result(&client, post_result_uri, job_id, &QueryResult { enc_img_out: String::new(), text: err.to_string(), result: "failed".to_owned() }, &module_auth_token),
+                    Ok(res) => post_result(&client, &post_result_uri, job_id, &res, &module_auth_token),
+                    Err(err) => post_result(
+                        &client, 
+                        &post_result_uri, 
+                        job_id, 
+                        &QueryResult { 
+                            enc_img_out: String::new(), 
+                            text: err.to_string(), 
+                            result: String::from("Failed"),
+                        }, 
+                        &module_auth_token),
                 }
             }
             Err(err) => {

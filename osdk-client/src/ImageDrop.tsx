@@ -6,6 +6,7 @@ import React from "react";
 import { IconPhoto } from "@tabler/icons-react";
 import client from "./client";
 import { mediaSet } from "./Home";
+import { arrayBufferToBase64 } from "./utilFuncs";
 
 interface MediaWriteResponse {
     mediaItemRid: string;
@@ -36,7 +37,7 @@ export const ImageDropZone = React.memo<{
                         setUploadedImageUrl(URL.createObjectURL(blob));
                         setLoadingInput(false);
                         const url = `https://tekuro.usw-16.palantirfoundry.com/mio/api/media-set/${mediaSet}/items?mediaItemPath=${file.name}&mediaSetBranch=master`
-                        let response = await client.auth.executeWithToken(token => {
+                        const response = await client.auth.executeWithToken(token => {
                             return fetch(url, {
                                 method: "PUT",
                                 headers: {
@@ -75,15 +76,3 @@ export const ImageDropZone = React.memo<{
     );
 
 });
-
-
-export function arrayBufferToBase64(buffer: ArrayBuffer) {
-    var binary = '';
-    var bytes = new Uint8Array(buffer);
-    var len = bytes.byteLength;
-    for (var i = 0; i < len; i++) {
-        binary += String.fromCharCode(bytes[i]);
-    }
-    return window.btoa(binary);
-}
-

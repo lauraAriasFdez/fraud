@@ -6,10 +6,11 @@ import '@mantine/core/styles.css';
 import '@mantine/dropzone/styles.css';
 
 import { MantineProvider, Image, Skeleton, Loader } from '@mantine/core';
-import { arrayBufferToBase64, ImageDropZone } from "./ImageDrop";
+import { ImageDropZone } from "./ImageDrop";
 import { isOk } from "@fraud/sdk";
 import { IconAlertTriangle, IconCheck } from "@tabler/icons-react";
 import React from "react";
+import { arrayBufferToBase64 } from "./utilFuncs";
 
 export const mediaSet = "ri.mio.main.media-set.1d4b803f-bc7b-48b4-a74b-7cf85c04a912"
 
@@ -17,7 +18,7 @@ function Home() {
     const [imageURLs, setImageURLs] = useState<DownloadedMediaItem[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [uploadedMediaItem, setUploadedMediaItem] = useState<string | null>(null);
-    const [detectedText, setDetectedText] = useState<string | null>(null);
+    const [_detectedText, setDetectedText] = useState<string | null>(null);
     const [encodedImage, setEncodedImage] = useState<string | null>(null);
     const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
     const [loadingInput, setLoadingInput] = useState(false);
@@ -55,7 +56,7 @@ function Home() {
                 for (const item of items.slice(0,30)) {
                     downloadMediaThumbnail(mediaSet, item).then(thumbnail => {
                         setImageURLs(prev => {
-                            for (let item of prev) {
+                            for (const item of prev) {
                                 if (item.rid === thumbnail.rid) {
                                     return prev
                                 }
