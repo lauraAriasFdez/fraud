@@ -12,30 +12,34 @@
     align-items: center;
     gap: 15px;
     margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 .dropzone {
     margin-bottom: 20px;
 }
 
-.transparent {
+.clickButton {
     background: none;
     color: rgb(0, 0, 0);
-    box-shadow: rgba(0, 0, 0, 0.15) 0px 3px 3px 0px;
+}
+
+.imageAndTitle {
+    display: flex;
+    flex-direction: column;
+    border-radius: 8px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 2px 0px;
+    padding: 4px;
 }
 
 .previousMedia {
     display: flex;
     align-items: center;
     justify-content: start;
-    overflow: scroll;
-    height: 150px;
+    overflow-x: scroll;
+    height: 200px;
     width: 100%;
     gap: 10px;
-}
-
-.imageCard {
-    transform: rotate3d(0,1,0,-20deg);
 }
 
 .imageDropText {
@@ -59,6 +63,12 @@
     gap: 30px;
 }
 
+.centeredSkelli {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .imageContainer {
     width: 600px;
     height: 400px;
@@ -67,5 +77,6 @@
     align-items: center;
     overflow: hidden;
     padding: 5px;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 12px 28px 0px, rgba(0, 0, 0, 0.1) 0px 2px 4px 0px, rgba(255, 255, 255, 0.05) 0px 0px 0px 1px inset;
 }
 

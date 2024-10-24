@@ -8,11 +8,11 @@ import '@mantine/dropzone/styles.css';
 import { MantineProvider, Image, Skeleton, Loader } from '@mantine/core';
 import { ImageDropZone } from "./ImageDrop";
 import { isOk } from "@fraud/sdk";
-import { IconAlertTriangle, IconCheck } from "@tabler/icons-react";
+import { IconAlertTriangle, IconCheck, IconX } from "@tabler/icons-react";
 import React from "react";
 import { arrayBufferToBase64 } from "./utilFuncs";
 
-export const mediaSet = "ri.mio.main.media-set.1d4b803f-bc7b-48b4-a74b-7cf85c04a912"
+export const mediaSet = "ri.mio.main.media-set.411dddf2-0d63-4f57-b1fb-15978796e6c9"
 
 function Home() {
     const [imageURLs, setImageURLs] = useState<DownloadedMediaItem[]>([]);
@@ -95,24 +95,26 @@ function Home() {
                         {imageURLs
                             .sort((a, b) => b.timestamp - a.timestamp)
                             .map(item => (
-                                <button key={item.url} className={css.transparent} onMouseDown={handleImageSelect(item)}>
-                                    <Image 
-                                        key={item.url}
-                                        radius="md"
-                                        h="100"
-                                        w="100"
-                                        fit="contain"
-                                        src={item.url}
-                                        alt={`Image ${item.name}`}
-                                    />
-                                    <span>{item.name}</span>
-                                </button>
+                                <div className={css.imageAndTitle}>
+                                    <button key={item.url} className={css.clickButton} onMouseDown={handleImageSelect(item)}>
+                                        <Image 
+                                            key={item.url}
+                                            radius="md"
+                                            h="100"
+                                            w="100"
+                                            fit="cover"
+                                            src={item.url}
+                                            alt={`Image ${item.name}`}
+                                        />
+                                    </button>
+                                <span>{item.name}</span>
+                                </div>
                         ))}
                     </div>
                 </Skeleton>
                 <DetectionResult detectedResult={detectedResult} loadingInput={loadingInput} loadingOutput={loadingOutput}  />
                 <div className={css.dynamicImages}>
-                    <Skeleton visible={loadingInput}>
+                    <Skeleton className={css.centeredSkelli}visible={loadingInput}>
                         <div className={css.imageContainer}>
                             <Image
                                 radius="md"
@@ -122,7 +124,6 @@ function Home() {
                                 w="auto"
                                 mah="100%"
                                 maw="100%"
-                                fallbackSrc="https://placehold.co/600x400?text=output"
                             />
                         </div>
                     </Skeleton>
@@ -200,11 +201,19 @@ function translateDetectionResult(result: string | null) {
                 <IconCheck style={{color: "#2fb344"}}/>
             </div>
         );
+    } else if (result === "failed") {
+        return (
+            <div className={css.fraudResult}>
+                <span>Failed to run image detection</span>
+                <IconX style={{color: "#d63939"}}/>
+            </div>
+        );
     }
 }
 
 async function detectFraudFunc(enc_img: string, setDetectUrl: (value: string) => void, setDetectText: (value: string) => void, setLoadingOutput: (value: boolean) => void, setDetectedResult: (value: string) => void) {
     setLoadingOutput(true);
+
     const response = await client.ontology.queries.detectFraud({
         enc_img_in: enc_img 
     });
@@ -224,6 +233,8 @@ async function detectFraudFunc(enc_img: string, setDetectUrl: (value: string) =>
         setLoadingOutput(false);
     } else {
         console.log(JSON.stringify(response.error));
+        setDetectedResult("failed")
+        setLoadingOutput(false);
     }
 }
 
